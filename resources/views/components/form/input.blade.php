@@ -7,7 +7,7 @@
         <label for="{{ $id }}" class="text-[.8rem] font-semibold text-fg">{{ $label }}</label>
     @endif
     <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}" value="{{ old($name, $value) }}"
-        {{ $attributes->except('id')->class('w-full rounded-[10px] border border-line bg-surface px-3 py-2 text-sm text-fg outline-hidden transition focus:border-primary focus:ring-[3px] focus:ring-primary/20') }}>
+        {{ $attributes->except('id')->class('w-full rounded-[12px] border border-line bg-white/[0.04] px-3.5 py-2.5 text-sm text-fg outline-hidden backdrop-blur-md transition-all duration-200 placeholder:text-muted/60 focus:border-secondary focus:bg-white/[0.08] focus:ring-[3px] focus:ring-secondary/20') }}>
     @error($name)
         <p class="text-xs text-absent">{{ $message }}</p>
     @enderror

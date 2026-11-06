@@ -1,6 +1,27 @@
-/* Off-canvas sidebar on small screens. */
+/* Off-canvas sidebar on small screens with backdrop overlay. */
 const sidebar = document.getElementById('sidebar');
-const hide = () => sidebar?.classList.add('-translate-x-full');
+const backdrop = document.getElementById('sidebar-backdrop');
+const menuBtn = document.getElementById('menu-btn');
+const closeBtn = document.getElementById('sidebar-close-btn');
 
-document.getElementById('menu-btn')?.addEventListener('click', () => sidebar.classList.toggle('-translate-x-full'));
-document.addEventListener('keydown', (e) => e.key === 'Escape' && hide());
+function showSidebar() {
+    sidebar?.classList.remove('-translate-x-full');
+    backdrop?.classList.remove('hidden');
+}
+
+function hideSidebar() {
+    sidebar?.classList.add('-translate-x-full');
+    backdrop?.classList.add('hidden');
+}
+
+menuBtn?.addEventListener('click', () => {
+    if (sidebar?.classList.contains('-translate-x-full')) {
+        showSidebar();
+    } else {
+        hideSidebar();
+    }
+});
+
+closeBtn?.addEventListener('click', hideSidebar);
+backdrop?.addEventListener('click', hideSidebar);
+document.addEventListener('keydown', (e) => e.key === 'Escape' && hideSidebar());

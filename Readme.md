@@ -1,62 +1,46 @@
-# AttApp — Student Attendance Management
+# Running AttApp
 
-Laravel 13 · Tailwind CSS 4 (Vite) · MySQL / TiDB Cloud
+**Prerequisites:** PHP 8.3+ (you have 8.5), Node and npm. Composer isn't installed system-wide. I used a copy in the scratchpad, but `vendor/` is already installed in the project.
 
-## Setup
-
+## 1. First-time setup
 ```bash
-composer install
-npm install
-cp .env.example .env && php artisan key:generate   # skip if .env already exists
-# edit DB_* in .env (for TiDB Cloud also set MYSQL_ATTR_SSL_CA=/etc/ssl/cert.pem)
-
-php artisan migrate --seed      # creates the tables + demo data
-npm run build                   # or `npm run dev` while developing
-php artisan serve               # http://localhost:8000
+cd "/Volumes/ss joy/dcc/attapp"
 ```
+- `vendor/` and `node_modules/` are installed, `.env` exists with your TiDB settings, and `public/build` is already compiled.
+- To reinstall on another machine, run `composer install`, `npm install`, then `cp .env.example .env && php artisan key:generate`.
 
-Demo login: `anika` / `123` (all seeded faculty accounts use password `123` — change them in Settings).
-
-Tests: `php artisan test` (uses an in-memory SQLite database, never your real one).
-
-## Folder structure
-
+## 2. Create the tables
+```bash
+php artisan migrate --seed
 ```
-app/
-├── Enums/                    AttendanceStatus, NotificationType (labels, emoji, Tailwind colour classes)
-├── Http/
-│   ├── Controllers/
-│   │   ├── Auth/LoginController.php
-│   │   ├── DashboardController.php
-│   │   ├── AttendanceController.php          take attendance (form + save)
-│   │   ├── AttendanceReportController.php    filterable report
-│   │   ├── StudentController.php             list / create / update / delete
-│   │   ├── NotificationController.php        page (HTML) + top-bar bell (JSON)
-│   │   └── Settings/                         Settings tabs + Faculty / AcademicSession / Course CRUD
-│   └── Requests/             Form Requests holding all validation rules
-└── Models/                   Faculty (login user), Student, Course, AcademicSession,
-                              Attendance, ActivityNotification
-database/
-├── migrations/               one file per table
-└── seeders/DatabaseSeeder.php
-resources/
-├── css/app.css               Tailwind + theme tokens (light/dark)
-├── js/                       app.js entry; theme, sidebar, modal, toast, crud-form, notifications…
-│   └── pages/                loaded only on the page that needs them (dashboard charts, …)
-└── views/
-    ├── components/           <x-button>, <x-card>, <x-modal>, <x-avatar>, <x-icon>, <x-form.input> …
-    │   └── layouts/          app.blade.php (sidebar + top bar), guest.blade.php
-    ├── partials/             head, sidebar, topbar
-    └── auth/ dashboard/ attendance/ reports/ students/ notifications/ settings/   one folder per feature
-routes/web.php                every route, grouped by guest / auth
-tests/Feature/                end-to-end tests
+- This creates the 6 tables in the database named in `.env` (`DB_DATABASE=sys` on TiDB) and adds the demo data.
+- `sys` is a TiDB/MySQL system schema. If the migration is refused or you'd prefer a clean one, create a database such as `attapp` in TiDB, set `DB_DATABASE=attapp` in `.env`, then migrate.
+- To rebuild from scratch, run `php artisan migrate:fresh --seed`. That wipes the tables.
+
+## 3. Start the app
+```bash
+php artisan serve
 ```
+Open http://localhost:8000. Log in as `anika` / `123`. All the seeded accounts use password `123`.
 
-## Conventions
+## 4. While editing views, CSS or JS
+Use the Vite dev server in a second terminal, so changes show up live:
+```bash
+npm run dev
+```
+Before you deploy, run `npm run build` and stop the dev server.
 
-- **Colours are semantic tokens** (`bg-surface`, `text-muted`, `border-line`, `text-present`…) defined in
-  `resources/css/app.css`; dark mode only swaps the variables, so views never need `dark:` colour overrides.
-- **Reusable UI lives in Blade components** — change `<x-button>` once, every button follows.
-- **Create/edit forms** (students, settings modals) share `resources/js/crud-form.js`: a button with
-  `data-crud-edit` fills the form and switches it to `PUT`; `data-crud-create` resets it.
-- **Notifications** are written with `ActivityNotification::record(NotificationType::…, $title, $message)`.
+## 5. Tests
+```bash
+php artisan test
+```
+These use an in-memory SQLite database, never your TiDB data.
+
+## Troubleshooting
+| Symptom | Fix |
+|---|---|
+| `Access denied` | Add your current IP to the TiDB Cloud allowlist, or reset the password in `.env` (quote it if it has special characters). |
+| Page shows unstyled | Run `npm run build`, or start `npm run dev`. |
+| `Table … doesn't exist` | Run step 2. |
+| Odd PHP parse errors in `config/` | Delete the macOS junk files: `find . -name '._*' -not -path './vendor/*' -not -path './node_modules/*' -delete` |
+| Changed `.env` but nothing happens | Run `php artisan config:clear`. |

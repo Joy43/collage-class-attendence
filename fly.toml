@@ -1,0 +1,33 @@
+app = "attapp"
+primary_region = "sin"
+
+[build]
+
+[env]
+  APP_ENV = "production"
+  APP_DEBUG = "false"
+  APP_URL = "https://attapp.fly.dev"
+  LOG_CHANNEL = "stderr"
+  LOG_LEVEL = "info"
+  DB_CONNECTION = "mysql"
+  DB_HOST = "gateway01.ap-northeast-1.prod.aws.tidbcloud.com"
+  DB_PORT = "4000"
+  DB_DATABASE = "attapp"
+  DB_USERNAME = "4R9bCjc2FFonFYC.root"
+  MYSQL_ATTR_SSL_CA = "/etc/ssl/certs/ca-certificates.crt"
+  SESSION_DRIVER = "file"
+  CACHE_STORE = "file"
+  QUEUE_CONNECTION = "sync"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  memory = "512mb"
+  cpu_kind = "shared"
+  cpus = 1

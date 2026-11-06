@@ -8,48 +8,40 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ───────────────────────── Theme tokens ─────────────────────────
-   Semantic colours: use `bg-surface`, `text-muted`, `border-line`,
-   `text-present` … in views. Light/dark values live in the variables
-   below, so components never need `dark:` colour overrides. */
-:root {
-    --canvas: #f8fafc;
-    --surface: #ffffff;
-    --subtle: #f1f5f9;
-    --line: #e2e8f0;
-    --line-hover: #cbd5e1;
+   Palette:
+   - Background: #0B1020
+   - Primary: #2563EB
+   - Secondary: #38BDF8
+   - Glass surface: rgba(255, 255, 255, 0.08)
+   - Glass border: rgba(255, 255, 255, 0.15)
+   - Text: #F8FAFC
+   - Muted text: #94A3B8
+────────────────────────────────────────────────────────────────── */
+:root, .dark {
+    --canvas: #0B1020;
+    --surface: rgba(255, 255, 255, 0.08);
+    --surface-hover: rgba(255, 255, 255, 0.12);
+    --subtle: rgba(255, 255, 255, 0.04);
+    --line: rgba(255, 255, 255, 0.15);
+    --line-hover: rgba(255, 255, 255, 0.28);
 
-    --fg: #0f172a;
-    --muted: #64748b;
-    --faint: #94a3b8;
+    --fg: #F8FAFC;
+    --muted: #94A3B8;
+    --faint: #64748B;
 
-    --primary: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-soft: #eff6ff;
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-soft: rgba(37, 99, 235, 0.18);
 
-    --present: #16a34a;  --present-soft: #f0fdf4;
-    --absent: #dc2626;   --absent-soft: #fef2f2;
-    --late: #ea580c;     --late-soft: #fff7ed;
-    --leave: #7c3aed;    --leave-soft: #f5f3ff;
-    --holiday: #0284c7;  --holiday-soft: #f0f9ff;
-}
+    --secondary: #38BDF8;
+    --secondary-hover: #0EA5E9;
+    --secondary-soft: rgba(56, 189, 248, 0.18);
 
-.dark {
-    --canvas: #0f172a;
-    --surface: #1e293b;
-    --subtle: #0f172a;
-    --line: #334155;
-    --line-hover: #475569;
-
-    --fg: #f1f5f9;
-    --muted: #94a3b8;
-    --faint: #475569;
-
-    --primary-soft: rgb(37 99 235 / 0.14);
-    --present-soft: rgb(22 163 74 / 0.14);
-    --absent-soft: rgb(220 38 38 / 0.14);
-    --late-soft: rgb(234 88 12 / 0.14);
-    --leave-soft: rgb(124 58 237 / 0.14);
-    --holiday-soft: rgb(2 132 199 / 0.14);
+    --present: #10b981;  --present-soft: rgba(16, 185, 129, 0.16);
+    --absent: #ef4444;   --absent-soft: rgba(239, 68, 68, 0.16);
+    --late: #f59e0b;     --late-soft: rgba(245, 158, 11, 0.16);
+    --leave: #a855f7;    --leave-soft: rgba(168, 85, 247, 0.16);
+    --holiday: #38bdf8;  --holiday-soft: rgba(56, 189, 248, 0.16);
 }
 
 @theme inline {
@@ -57,6 +49,7 @@
 
     --color-canvas: var(--canvas);
     --color-surface: var(--surface);
+    --color-surface-hover: var(--surface-hover);
     --color-subtle: var(--subtle);
     --color-line: var(--line);
     --color-line-hover: var(--line-hover);
@@ -67,6 +60,10 @@
     --color-primary: var(--primary);
     --color-primary-hover: var(--primary-hover);
     --color-primary-soft: var(--primary-soft);
+    --color-secondary: var(--secondary);
+    --color-secondary-hover: var(--secondary-hover);
+    --color-secondary-soft: var(--secondary-soft);
+
     --color-present: var(--present);
     --color-present-soft: var(--present-soft);
     --color-absent: var(--absent);
@@ -78,38 +75,83 @@
     --color-holiday: var(--holiday);
     --color-holiday-soft: var(--holiday-soft);
 
-    --animate-fade-in: fade-in 0.2s ease;
-    --animate-slide-up: slide-up 0.22s ease;
-    --animate-slide-toast: slide-toast 0.3s ease;
+    --animate-fade-in: fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    --animate-slide-up: slide-up 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    --animate-slide-toast: slide-toast 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 
     @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes slide-up { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     @keyframes slide-toast { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 }
 
 /* ───────────────────────── Base ───────────────────────── */
 @layer base {
-    body { @apply bg-canvas font-sans text-fg antialiased; }
-    button:not(:disabled), [role='button']:not(:disabled) { cursor: pointer; }
+    html {
+        color-scheme: dark;
+    }
+
+    body {
+        background-color: var(--canvas);
+        background-image:
+            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(37, 99, 235, 0.18), transparent),
+            radial-gradient(ellipse 60% 40% at 90% 85%, rgba(56, 189, 248, 0.12), transparent);
+        background-attachment: fixed;
+        font-family: var(--font-sans);
+        color: var(--fg);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    button:not(:disabled), [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+
+    ::selection {
+        background: rgba(56, 189, 248, 0.3);
+        color: #ffffff;
+    }
 }
 
-/* ───────────────────────── Components ─────────────────────────
-   Only for markup we can't class directly (table cells inside loops). */
+/* ───────────────────────── Components & Glass ───────────────────────── */
 @layer components {
-    .data-table { @apply w-full border-collapse; }
-    .data-table th {
-        @apply sticky top-0 z-10 whitespace-nowrap border-b border-line bg-subtle px-4 py-[11px] text-left text-xs font-bold uppercase tracking-wider text-muted;
+    .glass-surface {
+        background-color: var(--surface);
+        border: 1px solid var(--line);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
     }
-    .data-table td { @apply border-b border-line px-4 py-3 align-middle text-sm; }
-    .data-table tbody tr:last-child td { @apply border-b-0; }
-    .data-table tbody tr:hover td { @apply bg-subtle; }
+
+    .data-table {
+        @apply w-full border-collapse;
+    }
+    .data-table th {
+        @apply sticky top-0 z-10 whitespace-nowrap border-b border-line bg-[#0B1020]/90 backdrop-blur-md px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-muted;
+    }
+    .data-table td {
+        @apply border-b border-line/60 px-4 py-3.5 align-middle text-sm text-fg;
+    }
+    .data-table tbody tr:last-child td {
+        @apply border-b-0;
+    }
+    .data-table tbody tr {
+        @apply transition-colors duration-150;
+    }
+    .data-table tbody tr:hover td {
+        @apply bg-white/[0.04];
+    }
 
     .select-arrow {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
-        background-position: right 10px center;
+        background-position: right 12px center;
     }
 }
 
-@utility scroll-thin { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
-@utility scroll-none { scrollbar-width: none; &::-webkit-scrollbar { display: none; } }
+@utility scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+}
+@utility scroll-none {
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+}

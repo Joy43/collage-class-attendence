@@ -15,15 +15,15 @@ class DatabaseSeeder extends Seeder
     {
         foreach ([
             ['anika', 'Anika Akter'],
-            ['kawsir', 'Kawser'],
-            ['najma', 'Najma Akter'],
-            ['saima', 'Saima Akter'],
-            ['shanchayan', 'Sanchayan Bhattacharjee'],
-            ['manooj', 'Manooj Hazarika'],
-            ['joy', 'SS Joy'],
+            ['sani', 'sani'],
+            ['jannatul', 'jannatul'],
+            ['ssjoy', 'ssjoy'],
         ] as [$userName, $name]) {
             Faculty::firstOrCreate(['user_name' => $userName], ['name' => $name, 'password' => '123']);
         }
+
+        // Admin-style account for the project owner.
+        Faculty::firstOrCreate(['user_name' => 'dcc'], ['name' => 'DCC', 'password' => '123456']);
 
         foreach ([['CSE-192', 'SS Joy'], ['CSE-193', 'Sani']] as [$roll, $name]) {
             Student::firstOrCreate(['roll_no' => $roll], ['name' => $name]);

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Enums\AttendanceStatus;
 use App\Models\AcademicSession;
 use App\Models\Attendance;
