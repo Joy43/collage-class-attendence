@@ -1,9 +1,115 @@
 @import 'tailwindcss';
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../views';
+@source '../../app/Enums';
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+/* `dark` follows the class on <html> (toggled by resources/js/theme.js). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ───────────────────────── Theme tokens ─────────────────────────
+   Semantic colours: use `bg-surface`, `text-muted`, `border-line`,
+   `text-present` … in views. Light/dark values live in the variables
+   below, so components never need `dark:` colour overrides. */
+:root {
+    --canvas: #f8fafc;
+    --surface: #ffffff;
+    --subtle: #f1f5f9;
+    --line: #e2e8f0;
+    --line-hover: #cbd5e1;
+
+    --fg: #0f172a;
+    --muted: #64748b;
+    --faint: #94a3b8;
+
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-soft: #eff6ff;
+
+    --present: #16a34a;  --present-soft: #f0fdf4;
+    --absent: #dc2626;   --absent-soft: #fef2f2;
+    --late: #ea580c;     --late-soft: #fff7ed;
+    --leave: #7c3aed;    --leave-soft: #f5f3ff;
+    --holiday: #0284c7;  --holiday-soft: #f0f9ff;
 }
+
+.dark {
+    --canvas: #0f172a;
+    --surface: #1e293b;
+    --subtle: #0f172a;
+    --line: #334155;
+    --line-hover: #475569;
+
+    --fg: #f1f5f9;
+    --muted: #94a3b8;
+    --faint: #475569;
+
+    --primary-soft: rgb(37 99 235 / 0.14);
+    --present-soft: rgb(22 163 74 / 0.14);
+    --absent-soft: rgb(220 38 38 / 0.14);
+    --late-soft: rgb(234 88 12 / 0.14);
+    --leave-soft: rgb(124 58 237 / 0.14);
+    --holiday-soft: rgb(2 132 199 / 0.14);
+}
+
+@theme inline {
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+    --color-canvas: var(--canvas);
+    --color-surface: var(--surface);
+    --color-subtle: var(--subtle);
+    --color-line: var(--line);
+    --color-line-hover: var(--line-hover);
+    --color-fg: var(--fg);
+    --color-muted: var(--muted);
+    --color-faint: var(--faint);
+
+    --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
+    --color-primary-soft: var(--primary-soft);
+    --color-present: var(--present);
+    --color-present-soft: var(--present-soft);
+    --color-absent: var(--absent);
+    --color-absent-soft: var(--absent-soft);
+    --color-late: var(--late);
+    --color-late-soft: var(--late-soft);
+    --color-leave: var(--leave);
+    --color-leave-soft: var(--leave-soft);
+    --color-holiday: var(--holiday);
+    --color-holiday-soft: var(--holiday-soft);
+
+    --animate-fade-in: fade-in 0.2s ease;
+    --animate-slide-up: slide-up 0.22s ease;
+    --animate-slide-toast: slide-toast 0.3s ease;
+
+    @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes slide-toast { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+}
+
+/* ───────────────────────── Base ───────────────────────── */
+@layer base {
+    body { @apply bg-canvas font-sans text-fg antialiased; }
+    button:not(:disabled), [role='button']:not(:disabled) { cursor: pointer; }
+}
+
+/* ───────────────────────── Components ─────────────────────────
+   Only for markup we can't class directly (table cells inside loops). */
+@layer components {
+    .data-table { @apply w-full border-collapse; }
+    .data-table th {
+        @apply sticky top-0 z-10 whitespace-nowrap border-b border-line bg-subtle px-4 py-[11px] text-left text-xs font-bold uppercase tracking-wider text-muted;
+    }
+    .data-table td { @apply border-b border-line px-4 py-3 align-middle text-sm; }
+    .data-table tbody tr:last-child td { @apply border-b-0; }
+    .data-table tbody tr:hover td { @apply bg-subtle; }
+
+    .select-arrow {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+    }
+}
+
+@utility scroll-thin { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+@utility scroll-none { scrollbar-width: none; &::-webkit-scrollbar { display: none; } }

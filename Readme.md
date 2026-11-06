@@ -1,56 +1,62 @@
-find . -name "._*" -delete
-docker-compose up -d --build
-docker-compose exec -T web php /var/www/html/attapp/database/createtable.php
-docker-compose down
-Username: anika
-Password: 123
-http://localhost:8081
-Web Portal (App): http://localhost:8080/attapp/login/index.php (User: anika / Pass: 123)
-phpMyAdmin (DB Panel): http://localhost:8081
-Faculty Attendance App Portal: 👉 http://localhost:8080/attapp/login/index.php 
+# AttApp — Student Attendance Management
 
-==================================================
-🚀 Starting Attendance Tracking System Setup...
-==================================================
-🧹 Cleaning up macOS temporary companion files...
-🐳 Building PHP web image and launching containers...
-...
-⏳ Waiting for MySQL database to initialize...
-✅ Database container is fully online.
-🗄️  Running database schema setup and seed scripts...
+Laravel 13 · Tailwind CSS 4 (Vite) · MySQL / TiDB Cloud
 
-🎉 System is fully online and ready!
---------------------------------------------------
-👉 Faculty Portal (Web App): http://localhost:8080/attapp/login/index.php
-   Faculty Credentials: Username: anika | Password: 123
---------------------------------------------------
-👉 Database Admin Panel (phpMyAdmin): http://localhost:8081
---------------------------------------------------
-👉 API Docs (Swagger UI): http://localhost:8082
---------------------------------------------------
-https://student-attendance-tracking-system-73cl.onrender.com/setup.php
+## Setup
 
-## Project structure
+```bash
+composer install
+npm install
+cp .env.example .env && php artisan key:generate   # skip if .env already exists
+# edit DB_* in .env (for TiDB Cloud also set MYSQL_ATTR_SSL_CA=/etc/ssl/cert.pem)
+
+php artisan migrate --seed      # creates the tables + demo data
+npm run build                   # or `npm run dev` while developing
+php artisan serve               # http://localhost:8000
+```
+
+Demo login: `anika` / `123` (all seeded faculty accounts use password `123` — change them in Settings).
+
+Tests: `php artisan test` (uses an in-memory SQLite database, never your real one).
+
+## Folder structure
 
 ```
-public/                    web root (only this is served)
-├── *.php                  pages: login, dashboard, take_attendance, manage_students,
-│                          view_attendance, notifications_page, settings, setup
-├── api/notifications.php  JSON endpoint used by the notification bell
-└── assets/
-    ├── css/app.css        theme tokens (light/dark) + a few non-utility rules
-    └── js/
-        ├── tailwind.config.js   Tailwind config (colours → CSS variables)
-        └── app.js               theme, toasts, modals, notifications
-src/
-├── config/database.php    DB connection (reads .env / env vars)
-├── helpers/icons.php      inline SVG icons
-├── helpers/ui.php         shared Tailwind class sets + render helpers (ui(), alert_box(), page_header()…)
+app/
+├── Enums/                    AttendanceStatus, NotificationType (labels, emoji, Tailwind colour classes)
+├── Http/
+│   ├── Controllers/
+│   │   ├── Auth/LoginController.php
+│   │   ├── DashboardController.php
+│   │   ├── AttendanceController.php          take attendance (form + save)
+│   │   ├── AttendanceReportController.php    filterable report
+│   │   ├── StudentController.php             list / create / update / delete
+│   │   ├── NotificationController.php        page (HTML) + top-bar bell (JSON)
+│   │   └── Settings/                         Settings tabs + Faculty / AcademicSession / Course CRUD
+│   └── Requests/             Form Requests holding all validation rules
+└── Models/                   Faculty (login user), Student, Course, AcademicSession,
+                              Attendance, ActivityNotification
+database/
+├── migrations/               one file per table
+└── seeders/DatabaseSeeder.php
+resources/
+├── css/app.css               Tailwind + theme tokens (light/dark)
+├── js/                       app.js entry; theme, sidebar, modal, toast, crud-form, notifications…
+│   └── pages/                loaded only on the page that needs them (dashboard charts, …)
 └── views/
-    ├── layouts/app_header.php, app_footer.php   authenticated shell (sidebar + top bar)
-    └── partials/head.php                        shared <head> (Tailwind CDN, font, theme)
+    ├── components/           <x-button>, <x-card>, <x-modal>, <x-avatar>, <x-icon>, <x-form.input> …
+    │   └── layouts/          app.blade.php (sidebar + top bar), guest.blade.php
+    ├── partials/             head, sidebar, topbar
+    └── auth/ dashboard/ attendance/ reports/ students/ notifications/ settings/   one folder per feature
+routes/web.php                every route, grouped by guest / auth
+tests/Feature/                end-to-end tests
 ```
 
-Styling uses Tailwind via the Play CDN (no build step). Colours are semantic tokens
-(`bg-surface`, `text-muted`, `border-line`, `text-present` …) defined in `app.css`, so dark mode is
-just `html.dark`. Reusable class sets live in `src/helpers/ui.php`.
+## Conventions
+
+- **Colours are semantic tokens** (`bg-surface`, `text-muted`, `border-line`, `text-present`…) defined in
+  `resources/css/app.css`; dark mode only swaps the variables, so views never need `dark:` colour overrides.
+- **Reusable UI lives in Blade components** — change `<x-button>` once, every button follows.
+- **Create/edit forms** (students, settings modals) share `resources/js/crud-form.js`: a button with
+  `data-crud-edit` fills the form and switches it to `PUT`; `data-crud-create` resets it.
+- **Notifications** are written with `ActivityNotification::record(NotificationType::…, $title, $message)`.
