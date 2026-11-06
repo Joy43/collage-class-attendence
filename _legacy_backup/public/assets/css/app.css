@@ -1,0 +1,61 @@
+/* ============================================================
+   AttApp — theme tokens + the few things utilities can't express.
+   Everything else is Tailwind utility classes in the PHP views.
+   Colours are space-separated RGB channels so Tailwind's
+   opacity modifiers work (e.g. `border-present/25`).
+   ============================================================ */
+
+:root {
+  --c-canvas:        248 250 252;
+  --c-surface:       255 255 255;
+  --c-subtle:        241 245 249;
+  --c-line:          226 232 240;
+  --c-line-hover:    203 213 225;
+
+  --c-fg:            15 23 42;
+  --c-muted:         100 116 139;
+  --c-faint:         148 163 184;
+
+  --c-primary:       37 99 235;
+  --c-primary-hover: 29 78 216;
+  --c-primary-soft:  239 246 255;
+
+  --c-present:       22 163 74;   --c-present-soft: 240 253 244;
+  --c-absent:        220 38 38;   --c-absent-soft:  254 242 242;
+  --c-late:          234 88 12;   --c-late-soft:    255 247 237;
+  --c-leave:         124 58 237;  --c-leave-soft:   245 243 255;
+  --c-holiday:       2 132 199;   --c-holiday-soft: 240 249 255;
+}
+
+html.dark {
+  --c-canvas:        15 23 42;
+  --c-surface:       30 41 59;
+  --c-subtle:        15 23 42;
+  --c-line:          51 65 85;
+  --c-line-hover:    71 85 105;
+
+  --c-fg:            241 245 249;
+  --c-muted:         148 163 184;
+  --c-faint:         71 85 105;
+
+  --c-primary-soft:  31 48 80;
+  --c-present-soft:  29 56 61;
+  --c-absent-soft:   53 41 57;
+  --c-late-soft:     55 47 53;
+  --c-leave-soft:    41 43 80;
+  --c-holiday-soft:  27 52 76;
+}
+
+body { -webkit-font-smoothing: antialiased; }
+
+/* Native <select> with a custom chevron */
+.select-arrow {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+/* Thin themed scrollbars for panels */
+.scroll-thin { scrollbar-width: thin; scrollbar-color: rgb(var(--c-line)) transparent; }
+.scroll-none { scrollbar-width: none; }
+.scroll-none::-webkit-scrollbar { display: none; }

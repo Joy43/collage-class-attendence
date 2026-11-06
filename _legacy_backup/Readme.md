@@ -1,0 +1,56 @@
+find . -name "._*" -delete
+docker-compose up -d --build
+docker-compose exec -T web php /var/www/html/attapp/database/createtable.php
+docker-compose down
+Username: anika
+Password: 123
+http://localhost:8081
+Web Portal (App): http://localhost:8080/attapp/login/index.php (User: anika / Pass: 123)
+phpMyAdmin (DB Panel): http://localhost:8081
+Faculty Attendance App Portal: 👉 http://localhost:8080/attapp/login/index.php 
+
+==================================================
+🚀 Starting Attendance Tracking System Setup...
+==================================================
+🧹 Cleaning up macOS temporary companion files...
+🐳 Building PHP web image and launching containers...
+...
+⏳ Waiting for MySQL database to initialize...
+✅ Database container is fully online.
+🗄️  Running database schema setup and seed scripts...
+
+🎉 System is fully online and ready!
+--------------------------------------------------
+👉 Faculty Portal (Web App): http://localhost:8080/attapp/login/index.php
+   Faculty Credentials: Username: anika | Password: 123
+--------------------------------------------------
+👉 Database Admin Panel (phpMyAdmin): http://localhost:8081
+--------------------------------------------------
+👉 API Docs (Swagger UI): http://localhost:8082
+--------------------------------------------------
+https://student-attendance-tracking-system-73cl.onrender.com/setup.php
+
+## Project structure
+
+```
+public/                    web root (only this is served)
+├── *.php                  pages: login, dashboard, take_attendance, manage_students,
+│                          view_attendance, notifications_page, settings, setup
+├── api/notifications.php  JSON endpoint used by the notification bell
+└── assets/
+    ├── css/app.css        theme tokens (light/dark) + a few non-utility rules
+    └── js/
+        ├── tailwind.config.js   Tailwind config (colours → CSS variables)
+        └── app.js               theme, toasts, modals, notifications
+src/
+├── config/database.php    DB connection (reads .env / env vars)
+├── helpers/icons.php      inline SVG icons
+├── helpers/ui.php         shared Tailwind class sets + render helpers (ui(), alert_box(), page_header()…)
+└── views/
+    ├── layouts/app_header.php, app_footer.php   authenticated shell (sidebar + top bar)
+    └── partials/head.php                        shared <head> (Tailwind CDN, font, theme)
+```
+
+Styling uses Tailwind via the Play CDN (no build step). Colours are semantic tokens
+(`bg-surface`, `text-muted`, `border-line`, `text-present` …) defined in `app.css`, so dark mode is
+just `html.dark`. Reusable class sets live in `src/helpers/ui.php`.
